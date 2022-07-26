@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments :: html_head(pageTitle='Room HomePage')" />
+    <body>
+        <!-- Navigation-->
+        <nav th:replace="fragments :: homeNavbar"></nav>
+
+        <!-- Header-->
+        <header class="bg-dark py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="text-center text-white">
+                    <h1 class="display-4 fw-bolder">Room</h1>
+                    <p class="lead fw-normal text-white-50 mb-0">With this room hompeage template</p>
+                </div>
+            </div>
+        </header>
+        <!-- Section-->
+        <section class="py-5">
+            <div class="container px-4 px-lg-5 mt-5">
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center" id="listRoom">
+                    <div class="col mb-5" th:each="r: ${listRoom}">
+                        <div class="card h-100">
+                            <img class="card-img-top" th:src="|@{/images/}${r.image}|" alt="..." style="border-bottom: 2px solid #000; height: 157px;" />
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <a class="product-name" th:href="|@{/home/detail/}${r.id}|"><h5 class="fw-bolder" th:text="${r.name}"></h5></a>
+                                </div>
+                            </div>
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" th:href="|@{/book-room/}${r.id}|">Book room</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid my-2" style="text-align: center">
+                <th:block th:each="i: ${#numbers.sequence(1, pageNumber)}" th:if="${i>0}">
+                    <button class="btn btn-primary mx-1" th:text="${i}" th:value="${i - 1}" onclick="selectPage(this)"></button>
+                </th:block>
+            </div>
+        </section>
+        <!-- Footer-->
+        <footer class="py-5 bg-dark">
+            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2022</p></div>
+        </footer>
+        <script th:replace="fragments :: toastrOptions"></script>
+        <script>
+            function bookRoom(id) {
+                toastr.options = {
+                    "preventDuplicates": false,
+                    "timeOut": 500,
+                }
+            }
+
+            var limit = 8;
+            function selectPage(objButton) {
+                $.ajax({
+                    url: '/home/paging?page=' + objButton.value + '&size=' + limit,
+                    type: 'GET',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function (data) {
+                        $('#listRoom div').remove();
+                        const obj = data.content;
+                        obj.map(r => {
+                                $('#listRoom').append(`
+                                        <div class="col mb-5">
+                                            <div class="card h-100">
+                                                <img class="card-img-top" src="/images/${r.image}" alt="..." style="border-bottom: 2px solid #000; height: 157px;" />
+                                                <div class="card-body p-4">
+                                                    <div class="text-center">
+                                                        <a class="product-name" href="/home/detail/${r.id}"><h5 class="fw-bolder">${r.name}</h5></a>
+                                                    </div>
+                                                </div>
+                                                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                                    <div class="text-center"><a class="btn btn-outline-dark mt-auto" onclick="bookRoom(${r.id})">Book room</a></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `)
+                        })
+                    },
+                    error: function (jqXhr, textStatus, errorMessage) {
+                        console.log('Error' + errorMessage);
+                    }
+                })
+            }
+        </script>
+    </body>
+</html>

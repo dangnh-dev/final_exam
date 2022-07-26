@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: html_head(pageTitle='Room HomePage')" />
+<body class="sb-nav-fixed">
+<nav th:replace="fragments :: homeNavbar"></nav>
+<div id="layoutSidenav">
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4 mt-4">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h2 class="mb-0 text-gray-800">Book Room</h2>
+                </div>
+                <form method="post" th:action="@{/home/book-room}" th:object="${bookRoom}">
+                    <div class="mb-3">
+                        <label class="form-label">From Day</label>
+                        <input type="date" class="form-control" th:field="*{fromDay}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">To Day</label>
+                        <input type="date" class="form-control" th:field="*{toDay}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" >Submit</button>
+                    <a th:href="@{/home}" class="btn btn-secondary">Back</a>
+                </form>
+            </div>
+        </main>
+    </div>
+    <footer class="py-5 bg-dark">
+        <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2022</p></div>
+    </footer>
+</div>
+<script th:replace="fragments :: toastrOptions"></script>
+<script>
+    window.onload = function() {
+        const { search } = window.location;
+        const result = (new URLSearchParams(search)).get('addResult');
+
+        if (result === 'true') {
+            // The page was just reloaded, display the toast:
+            toastr.success('Book room Success');
+        } else if (result === 'false') {
+            toastr.error('Book room Fail');
+        }
+    };
+</script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments :: html_head(pageTitle='Add Room - SB Admin')" />
+    <body class="sb-nav-fixed">
+        <nav th:replace="fragments :: adminNavbar"></nav>
+        <div id="layoutSidenav">
+            <div th:replace="fragments :: sidenav"></div>
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid px-4 mt-4">
+                        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                            <h2 class="mb-0 text-gray-800">Add Room</h2>
+                        </div>
+                        <form method="post" th:action="@{/admin/room/add}" th:object="${room}" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label class="form-label">Room Name</label>
+                                <input type="text" class="form-control" th:field="*{name}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Room Image</label>
+                                <input type="file" class="form-control" name="roomImage" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Room Price</label>
+                                <input type="number" class="form-control" th:field="*{price}" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" >Submit</button>
+                            <a th:href="@{/admin/room}" class="btn btn-secondary">Back</a>
+                        </form>
+                    </div>
+                </main>
+                <footer th:replace="fragments :: footer"></footer>
+            </div>
+        </div>
+        <script th:replace="fragments :: toastrOptions"></script>
+        <script>
+            window.onload = function() {
+                const { search } = window.location;
+                const result = (new URLSearchParams(search)).get('addResult');
+
+                if (result === 'true') {
+                    // The page was just reloaded, display the toast:
+                    toastr.success('Add Success');
+                } else if (result === 'false') {
+                    toastr.error('Add Fail');
+                }
+            };
+        </script>
+    </body>
+</html>
